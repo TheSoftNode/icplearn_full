@@ -1,0 +1,458 @@
+type AIAgent = record {
+  id : text;
+  personality : text;
+  interaction_count : nat64;
+  updated_at : nat64;
+  system_prompt : text;
+  capabilities : vec text;
+  model_type : text;
+  name : text;
+  created_at : nat64;
+  user_id : principal;
+  agent_type : text;
+  is_active : bool;
+  rating : float64;
+};
+type AIInteraction = record {
+  id : text;
+  context : text;
+  response_time : nat64;
+  tokens_used : nat64;
+  created_at : nat64;
+  agent_id : text;
+  user_id : principal;
+  response : text;
+  prompt : text;
+  rating : opt nat64;
+};
+type AIInteractionResponse = record {
+  response : AIResponse;
+  prompt : AIPrompt;
+};
+type AILearningAnalytics = record {
+  retention_prediction : float64;
+  ai_confidence : float64;
+  learning_velocity : float64;
+  generated_at : nat64;
+  personalized_tips : vec text;
+  recommended_focus : vec text;
+  user_id : principal;
+  knowledge_gaps : vec text;
+  strength_areas : vec text;
+  engagement_score : float64;
+  optimal_study_times : vec text;
+};
+type AIPrompt = record {
+  id : text;
+  created_at : nat64;
+  user_id : principal;
+  skill_id : opt text;
+  prompt : text;
+};
+type AIResponse = record {
+  id : text;
+  prompt_id : text;
+  model_used : text;
+  tokens_used : nat64;
+  created_at : nat64;
+  response : text;
+};
+type AITutorSession = record {
+  id : text;
+  messages : vec AIInteraction;
+  agent_id : text;
+  user_id : principal;
+  course_id : opt text;
+  learning_progress : text;
+  skill_id : opt text;
+  is_active : bool;
+  ended_at : opt nat64;
+  started_at : nat64;
+  session_type : text;
+};
+type Assessment = record {
+  id : text;
+  title : text;
+  updated_at : nat64;
+  creator_id : principal;
+  description : text;
+  created_at : nat64;
+  skill_id : text;
+  questions : vec Question;
+  is_active : bool;
+  time_limit : nat64;
+  passing_score : nat64;
+};
+type AssessmentResult = record {
+  id : text;
+  answers : vec nat64;
+  user_id : principal;
+  time_taken : nat64;
+  score : nat64;
+  completed_at : nat64;
+  assessment_id : text;
+  passed : bool;
+};
+type BitcoinReward = record {
+  id : text;
+  status : text;
+  skill_ids : vec text;
+  created_at : nat64;
+  user_id : principal;
+  reward_metadata : text;
+  amount : float64;
+};
+type ChatWithAgentParams = record {
+  context : opt text;
+  agent_id : text;
+  message : text;
+};
+type ChatWithAgentResult = variant { Ok : AIInteraction; Err : Error };
+type Course = record {
+  id : text;
+  title : text;
+  updated_at : nat64;
+  creator_id : principal;
+  difficulty : text;
+  description : text;
+  created_at : nat64;
+  enrollment_count : nat64;
+  is_published : bool;
+  skill_id : text;
+  estimated_duration : nat64;
+  modules : vec CourseModule;
+};
+type CourseModule = record {
+  id : text;
+  title : text;
+  duration : nat64;
+  content : text;
+  order : nat64;
+  resources : vec text;
+  video_url : opt text;
+};
+type CourseProgress = record {
+  id : text;
+  progress_percentage : nat64;
+  last_accessed : nat64;
+  user_id : principal;
+  course_id : text;
+  completed_at : opt nat64;
+  completed_modules : vec text;
+  started_at : nat64;
+};
+type CreateAIAgentParams = record {
+  personality : text;
+  system_prompt : text;
+  capabilities : vec text;
+  model_type : text;
+  name : text;
+  agent_type : text;
+};
+type CreateAIAgentResult = variant { Ok : AIAgent; Err : Error };
+type CreateAssessmentParams = record {
+  title : text;
+  description : text;
+  skill_id : text;
+  questions : vec Question;
+  time_limit : nat64;
+  passing_score : nat64;
+};
+type CreateAssessmentResult = variant { Ok : Assessment; Err : Error };
+type CreateBitcoinRewardParams = record {
+  skill_ids : vec text;
+  user_id : principal;
+  reward_metadata : opt text;
+  amount : float64;
+};
+type CreateBitcoinRewardResult = variant { Ok : BitcoinReward; Err : Error };
+type CreateCourseParams = record {
+  title : text;
+  difficulty : text;
+  description : text;
+  skill_id : text;
+  estimated_duration : nat64;
+  modules : vec CourseModule;
+};
+type CreateCourseResult = variant { Ok : Course; Err : Error };
+type CreateSkillParams = record {
+  prerequisites : vec text;
+  difficulty : text;
+  name : text;
+  description : text;
+  total_xp : nat64;
+  category : text;
+  learning_path : vec text;
+};
+type CreateSkillResult = variant { Ok : Skill; Err : Error };
+type EnrollCourseParams = record { course_id : text };
+type EnrollCourseResult = variant { Ok : CourseProgress; Err : Error };
+type Error = variant {
+  InvalidInput : text;
+  InvalidPayload : text;
+  NotFound : text;
+  Unauthorized : text;
+  Forbidden : text;
+};
+type GenerateContentParams = record {
+  topic : text;
+  difficulty : text;
+  content_type : text;
+  style : text;
+  length : nat64;
+  additional_params : text;
+};
+type GenerateContentResult = variant { Ok : text; Err : Error };
+type GenerateCourseContentParams = record { topic : text; difficulty : nat64 };
+type GenerateCourseContentResult = variant {
+  Ok : AIInteractionResponse;
+  Err : Error;
+};
+type GenerateLearningPathParams = record {
+  user_skills : vec text;
+  preferred_difficulty : text;
+  time_commitment : nat64;
+  learning_style : text;
+  learning_goals : vec text;
+};
+type GenerateLearningPathResult = variant {
+  Ok : PersonalizedLearningPath;
+  Err : Error;
+};
+type GenerateNFTMetadataParams = record {
+  mastery_level : nat64;
+  skill_name : text;
+};
+type GenerateNFTMetadataResult = variant {
+  Ok : AIInteractionResponse;
+  Err : Error;
+};
+type GetAIAgentResult = variant { Ok : AIAgent; Err : Error };
+type GetAssessmentResult = variant { Ok : Assessment; Err : Error };
+type GetBitcoinRewardResult = variant { Ok : BitcoinReward; Err : Error };
+type GetCourseResult = variant { Ok : Course; Err : Error };
+type GetLearningAnalyticsResult = variant {
+  Ok : AILearningAnalytics;
+  Err : Error;
+};
+type GetSkillResult = variant { Ok : Skill; Err : Error };
+type GetUserResult = variant { Ok : User; Err : Error };
+type GetUserSkillsParams = record {
+  skip : nat64;
+  mastery_level : opt text;
+  user_id : principal;
+  limit : nat64;
+};
+type ListAIAgentsResponse = record {
+  total : nat64;
+  skip : nat64;
+  limit : nat64;
+  items : vec AIAgent;
+};
+type ListAIAgentsResult = variant { Ok : ListAIAgentsResponse; Err : Error };
+type ListAssessmentsParams = record {
+  skip : nat64;
+  limit : nat64;
+  skill_id : opt text;
+};
+type ListAssessmentsResponse = record {
+  total : nat64;
+  skip : nat64;
+  limit : nat64;
+  items : vec Assessment;
+};
+type ListAssessmentsResult = variant {
+  Ok : ListAssessmentsResponse;
+  Err : Error;
+};
+type ListBitcoinRewardsResult = variant { Ok : vec BitcoinReward; Err : Error };
+type ListCoursesParams = record {
+  difficulty : opt text;
+  skip : nat64;
+  limit : nat64;
+  skill_id : opt text;
+  published_only : opt bool;
+};
+type ListCoursesResponse = record {
+  total : nat64;
+  skip : nat64;
+  limit : nat64;
+  items : vec Course;
+};
+type ListCoursesResult = variant { Ok : ListCoursesResponse; Err : Error };
+type ListSkillsParams = record {
+  difficulty : opt text;
+  skip : nat64;
+  limit : nat64;
+  category : opt text;
+};
+type ListSkillsResponse = record {
+  total : nat64;
+  skip : nat64;
+  limit : nat64;
+  items : vec Skill;
+};
+type ListSkillsResult = variant { Ok : ListSkillsResponse; Err : Error };
+type ListUserSkillsResponse = record {
+  total : nat64;
+  skip : nat64;
+  limit : nat64;
+  items : vec UserSkill;
+};
+type ListUserSkillsResult = variant {
+  Ok : ListUserSkillsResponse;
+  Err : Error;
+};
+type ListUsersParams = record { skip : nat64; limit : nat64 };
+type ListUsersResponse = record {
+  total : nat64;
+  skip : nat64;
+  limit : nat64;
+  items : vec User;
+};
+type ListUsersResult = variant { Ok : ListUsersResponse; Err : Error };
+type PersonalizedLearningPath = record {
+  id : text;
+  updated_at : nat64;
+  generated_by_agent : text;
+  created_at : nat64;
+  difficulty_progression : text;
+  user_id : principal;
+  skill_priorities : vec text;
+  adaptive_adjustments : text;
+  recommended_courses : vec text;
+  is_active : bool;
+  estimated_timeline : nat64;
+};
+type Question = record {
+  id : text;
+  question_text : text;
+  difficulty : text;
+  explanation : text;
+  correct_answer : nat64;
+  skill_id : text;
+  options : vec text;
+};
+type RegisterUserParams = record {
+  username : text;
+  email : text;
+  btc_address : opt text;
+};
+type Skill = record {
+  id : text;
+  updated_at : nat64;
+  prerequisites : vec text;
+  difficulty : text;
+  name : text;
+  description : text;
+  created_at : nat64;
+  total_xp : nat64;
+  category : text;
+  is_active : bool;
+  learning_path : vec text;
+};
+type StartTutorSessionParams = record {
+  agent_id : text;
+  course_id : opt text;
+  skill_id : opt text;
+  initial_message : text;
+  session_type : text;
+};
+type StartTutorSessionResult = variant { Ok : AITutorSession; Err : Error };
+type SubmitAssessmentParams = record {
+  answers : vec nat64;
+  time_taken : nat64;
+  assessment_id : text;
+};
+type SubmitAssessmentResult = variant { Ok : AssessmentResult; Err : Error };
+type UpdateProgressParams = record {
+  module_id : text;
+  completed : bool;
+  course_id : text;
+};
+type UpdateSkillProgressParams = record {
+  activity_type : text;
+  skill_id : text;
+  xp_gained : nat64;
+};
+type UpdateSkillProgressResult = variant { Ok : UserSkill; Err : Error };
+type UpdateUserParams = record {
+  username : opt text;
+  email : opt text;
+  is_active : opt bool;
+  btc_address : opt text;
+};
+type User = record {
+  id : principal;
+  updated_at : nat64;
+  username : text;
+  created_at : nat64;
+  email : text;
+  is_active : bool;
+  btc_address : opt text;
+};
+type UserSkill = record {
+  id : text;
+  progress_percentage : nat64;
+  certificates_earned : vec text;
+  last_updated : nat64;
+  mastery_level : text;
+  user_id : principal;
+  skill_id : text;
+  current_xp : nat64;
+  completed_at : opt nat64;
+  started_at : nat64;
+};
+type ValidateAnswerParams = record {
+  question : text;
+  user_answer : text;
+  expected_answer : text;
+};
+type ValidateAnswerResult = variant { Ok : AIInteractionResponse; Err : Error };
+service : () -> {
+  chat_with_agent : (ChatWithAgentParams) -> (ChatWithAgentResult);
+  create_ai_agent : (CreateAIAgentParams) -> (CreateAIAgentResult);
+  create_assessment : (CreateAssessmentParams) -> (CreateAssessmentResult);
+  create_bitcoin_reward : (CreateBitcoinRewardParams) -> (
+      CreateBitcoinRewardResult,
+    );
+  create_course : (CreateCourseParams) -> (CreateCourseResult);
+  create_skill : (CreateSkillParams) -> (CreateSkillResult);
+  enroll_course : (EnrollCourseParams) -> (EnrollCourseResult);
+  generate_content : (GenerateContentParams) -> (GenerateContentResult);
+  generate_course_content : (GenerateCourseContentParams) -> (
+      GenerateCourseContentResult,
+    );
+  generate_learning_path : (GenerateLearningPathParams) -> (
+      GenerateLearningPathResult,
+    );
+  generate_nft_metadata : (GenerateNFTMetadataParams) -> (
+      GenerateNFTMetadataResult,
+    );
+  get_ai_agent : (text) -> (GetAIAgentResult) query;
+  get_assessment_by_id : (text) -> (GetAssessmentResult) query;
+  get_bitcoin_reward : (text) -> (GetBitcoinRewardResult) query;
+  get_course_by_id : (text) -> (GetCourseResult) query;
+  get_greeting : (text) -> (text) query;
+  get_learning_analytics : (principal) -> (GetLearningAnalyticsResult) query;
+  get_skill_by_id : (text) -> (GetSkillResult) query;
+  get_user_bitcoin_rewards : (principal) -> (ListBitcoinRewardsResult) query;
+  get_user_by_id : (text) -> (GetUserResult) query;
+  get_user_count : (text) -> (nat64) query;
+  get_user_skills : (GetUserSkillsParams) -> (ListUserSkillsResult) query;
+  list_ai_agents : (nat64, nat64) -> (ListAIAgentsResult) query;
+  list_assessments : (ListAssessmentsParams) -> (ListAssessmentsResult) query;
+  list_courses : (ListCoursesParams) -> (ListCoursesResult) query;
+  list_skills : (ListSkillsParams) -> (ListSkillsResult) query;
+  list_users : (ListUsersParams) -> (ListUsersResult) query;
+  process_bitcoin_reward : (text) -> (GetBitcoinRewardResult);
+  register_user : (RegisterUserParams) -> (GetUserResult);
+  start_tutor_session : (StartTutorSessionParams) -> (StartTutorSessionResult);
+  submit_assessment : (SubmitAssessmentParams) -> (SubmitAssessmentResult);
+  update_course_progress : (UpdateProgressParams) -> (EnrollCourseResult);
+  update_skill_progress : (UpdateSkillProgressParams) -> (
+      UpdateSkillProgressResult,
+    );
+  update_user : (UpdateUserParams) -> (GetUserResult);
+  validate_answer : (ValidateAnswerParams) -> (ValidateAnswerResult);
+}
